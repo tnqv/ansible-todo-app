@@ -1,0 +1,9 @@
+---
+# Reused other roles
+roles:
+  - name: geerlingguy.firewall
+  - name: geerlingguy.repo-epel
+  - name: geerlingguy.mysql
+  - name: gantsign.golang
+  - name: geerlingguy.git
+  - name: weareinteractive.environment

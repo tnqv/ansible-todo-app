@@ -1,0 +1,65 @@
+---
+- hosts: service
+  become: yes
+
+  vars_files:
+    - vars.yaml
+
+  roles:
+    - geerlingguy.firewall
+    - geerlingguy.repo-epel
+    - gantsign.golang
+    - geerlingguy.git
+    - weareinteractive.environment
+
+  vars:
+    environment_config:
+      DB_HOST: "{{ groups['db'][0] }}"
+      DB_USERNAME: user
+      DB_PASSWORD: secret
+      DB_NAME: todo_app
+
+  tasks:
+    - name: Ensure required SELinux dependency is installed.
+      package:
+        name: libsemanage-python
+        state: present
+
+    - name: Configure SELinux to allow HTTPD connections.
+      seboolean:
+        name: "{{ item }}"
+        state: true
+        persistent: true
+      with_items:
+        - httpd_can_network_connect_db
+      when: ansible_selinux.status == 'enabled'
+
+    - name: Checkout todo-app code
+      git:
+        repo: 'https://tnqv:{{ github_token }}@github.com/tnqv/go-todo-rest-api-example.git'
+        version: master
+        dest: '{{ app_directory }}'
+      register: app_updated
+
+    # Only stop service and restart if detected files has changes
+    - name: Stop service if running 
+      service: name=todo-app state=stopped
+      when: app_updated.changed == true
+
+    - name: Build app
+      command: 'chdir={{ app_directory }} {{ golang_install_dir }}/bin/go build'
+      when: app_updated.changed == true
+    
+    - name: Copy server binary to exec directory
+      command: 'cp {{ app_directory }}/todo-app /usr/bin/todo-app'
+      when: app_updated.changed == true
+
+    - template:
+        src: todo-app.service.j2
+        dest: /etc/systemd/system/todo-app.service
+
+    - name: Start server on port 3000
+      service:
+        name: todo-app
+        state: started
+        use: service

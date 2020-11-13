@@ -1,0 +1,9 @@
+[Unit]
+Description=Todo App Server
+
+[Service]
+EnvironmentFile=/etc/environment
+ExecStart=/usr/bin/todo-app
+
+[Install]
+WantedBy=multi-user.target

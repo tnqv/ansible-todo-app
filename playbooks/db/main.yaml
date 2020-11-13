@@ -1,0 +1,19 @@
+---
+- hosts: db
+  become: yes
+
+  vars_files:
+    - vars.yaml
+
+  pre_tasks:
+    - name: Create dynamic MySQL variables.
+      set_fact:
+        mysql_users:
+          - name: user
+            host: "{{ groups['service'][0] }}"
+            password: secret
+            priv: "*.*:ALL"
+
+  roles:
+    - geerlingguy.firewall
+    - geerlingguy.mysql
