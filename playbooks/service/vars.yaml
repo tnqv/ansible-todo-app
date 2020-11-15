@@ -1,7 +1,8 @@
 ---
 firewall_allowed_tcp_ports:
   - "22"
-  - "3000"
+  - "80"
+  - "443"
 
 # Go language SDK version number
 golang_version: '1.14'
@@ -13,5 +14,17 @@ golang_gopath: '$HOME/go'
 
 app_directory: /opt/todo-app
 
+# Python settings.
+pip_install_packages: ['pyopenssl']
+
 # Because use 2FA Authentication, so use token instead
 github_token: xxx
+
+# Nginx settings.
+nginx_vhosts: []
+nginx_remove_default_vhost: True
+nginx_ppa_version: stable
+
+# Self-signed certificate settings.
+certificate_dir: /etc/ssl/private
+server_hostname: service.test
