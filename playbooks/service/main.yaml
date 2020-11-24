@@ -23,7 +23,7 @@
 
   vars:
     environment_config:
-      DB_HOST: "{{ hostvars[groups['db'][0]]['ansible_eth0']['ipv4']['address'] }}"
+      DB_HOST: "{{ hostvars['db']['ansible_eth0']['ipv4']['address'] }}"
       DB_USERNAME: user
       DB_PASSWORD: secret
       DB_NAME: todo_app
