@@ -1,0 +1,10 @@
+---
+# Reused other roles
+roles:
+  - name: geerlingguy.firewall
+  - name: geerlingguy.repo-epel
+  - name: gantsign.golang
+  - name: geerlingguy.git
+  - name: weareinteractive.environment
+  - name: geerlingguy.nginx
+  - name: geerlingguy.pip
